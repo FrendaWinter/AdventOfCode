@@ -27,19 +27,32 @@ str_to_int_hash = {
   'eight' => "8",
   'nine'  => "9"
 }
-i = 0
+
 lines.each do |line|
-    i += 1
     # Parse input
-    one = line.scan(/(\d|one*?|two*?|three*?|four*?|five*?|six*?|seven*?|eight*?|nine*?)/).first
-    two = line.scan(/(\d|one*?|two*?|three*?|four*?|five*?|six*?|seven*?|eight*?|nine*?)/).last
+    first_number = String.new
+    second_number = String.new
+    
+    (0...line.length).each do |index|
+      substring = line[0..index]
+      one = substring.scan(/(\d|one|two|three|four|five|six|seven|eight|nine)/).first
+      unless one.nil?
+        first_number = one[0].to_s
+        first_number = str_to_int_hash[first_number] if first_number.match(/(one|two|three|four|five|six|seven|eight|nine)/)
+        break
+      end
+    end
 
-    first_number = one[0].to_s
-    second_number = two[0].to_s
-
-    first_number = str_to_int_hash[first_number] if first_number.match(/(one|two|three|four|five|six|seven|eight|nine)/)
-    second_number = str_to_int_hash[second_number] if second_number.match(/(one|two|three|four|five|six|seven|eight|nine)/)
-    # p (first_number + second_number).to_i
+    (line.length - 1).downto(0) do |index|
+      substring = line[index..-1]
+      two = substring.scan(/(\d|one|two|three|four|five|six|seven|eight|nine)/).first
+      unless two.nil?
+        second_number = two[0].to_s
+        second_number = str_to_int_hash[second_number] if second_number.match(/(one|two|three|four|five|six|seven|eight|nine)/)
+        break
+      end
+    end
+    
     sum += (first_number + second_number).to_i
 end
 
