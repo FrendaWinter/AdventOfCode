@@ -14,9 +14,9 @@ int main() {
     return 1;
   }
 
-  for (const string& line: lines) {
-    cout << line << endl;
-    
-  }
+  vector<string> directions = split(lines[0], ",");
+
+  for(auto i : directions)
+    cout << i << endl;
   return 0;
 }
