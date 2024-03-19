@@ -16,13 +16,49 @@ int main()
     return 1;
   }
 
-  vector<string> directions = split(lines[0], ",");
+  vector<string> directions = split(lines[0], ", ");
 
-  for (auto i : directions)
+  int x, y = 0;
+
+  for (int i = 0; i < directions.size(); i++)
   {
-    string direction = i.substr(1, 1);
+    string direction = directions[i].substr(0, 1);
 
-    string step = i.substr(2, i.length() - 2);
+    string step = directions[i].substr(1, directions[i].length() - 1);
+
+    // cout << direction << " " << step << endl;
+    int stepLength = std::stoi(step);
+
+    int di = 1;
+    // if odd -> Change y -> Dir -
+    // if even -> Change x -> Dir +
+
+    if (i % 2 == 0)
+    {
+      if (direction == "R")
+      {
+        x += di * stepLength;
+        di *= -1;
+      }
+      else
+      {
+        x -= di * stepLength;
+        di *= -1;
+      }
+    }
+    else
+    {
+      if (direction == "R")
+      {
+        y += di * stepLength;
+        di *= -1;
+      }
+      else
+      {
+        y -= di * stepLength;
+        di *= -1;
+      }
+    }
   }
-  return 0;
+  cout << x + y;
 }
