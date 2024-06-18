@@ -67,21 +67,23 @@ int main (int argc, char *argv[]) {
     result_index++;
   }
 
-  int count_array[188] = {1};
+  int count_array[188];
   for (int i = 0; i < 188; i++) {
-    if (i + result[i] >= 188)
-    {
-      for (int j = i + 1; j <= i + result[i]; j++) {
-        count_array[j] += count_array[i];
-      }
+    count_array[i] = 1; 
+  }
+  for (int i = 0; i < 188; i++) {
+    for (int j = i + 1; j < i + 1 + result[i]; j++) {
+      count_array[j] = count_array[j] + count_array[i];
     }
   }
 
   int total = 0;
   for (int i = 0; i < 188; i++) {
+    cout << count_array[i] << " ";
     total += count_array[i];
   }
-
+  
+  cout << endl;
   cout << total << endl;
   return 0;
 }
