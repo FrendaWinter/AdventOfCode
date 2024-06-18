@@ -19,36 +19,35 @@ end
 
 p sum
 
-# Part 2
+# Part 2 
+sum = 0 
+i = 0
+total_of_card = lines.length
 
-# sum = 0
-# i = 0
+result = []
+lines.each do |line|
+  content = line.gsub(/Card.+\d+:/, '')
+  p1 = content.split('|').first
+  p2 = content.split('|').last
+  a1 = p1.scan(/\d+/)
+  a1 = a1.map(&:to_i)
+  a2 = p2.scan(/\d+/)
+  a2 = a2.map(&:to_i)
 
-# total_of_card = lines.length
+  result <<  a2.length - (a2 - a1).length
+end
 
-# lines.each do |line|
-#   i += 1
-#   sum +=1
-#   content = line.gsub(/Card.+\d+:/, '')
-#   p1 = content.split('|').first
-#   p2 = content.split('|').last
-#   a1 = p1.scan(/\d+/)
-#   a1 = a1.map(&:to_i)
-#   a2 = p2.scan(/\d+/)
-#   a2 = a2.map(&:to_i)
+p result
+p result.length
 
-#   p  a2.length - (a2 - a1).length
+@a = Array.new(188, 1)
 
-#   sum += a2.length - (a2 - a1).length
-#   # if i + 10 < total_of_card
-#   #   sum += a2.length - (a2 - a1).length
-#   # else
-#   #   if i + (a2.length - (a2 - a1).length) >= total_of_card
-#   #     sum += total_of_card - i
-#   #   else
-#   #     sum += (a2.length - (a2 - a1).length)
-#   #   end
-#   # end
-# end
+result[0..5].each_with_index do |x, i_r|
+  @a.each_with_index.map do |card, i_c|
+    if (i_c).between?(i_r + 1, i_r + x)
+      card += card[i_r]
+    end
+  end
+end
 
-# p sum
+p @a
