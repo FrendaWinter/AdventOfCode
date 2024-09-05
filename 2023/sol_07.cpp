@@ -22,16 +22,6 @@ int countInString(const char &c, const string &a) {
   return std::count(a.begin(), a.end(), c);
 }
 
-bool compareHand(std::pair<string, string> a, std::pair<string, string> b) {
-  /*cout << "a: " << a.first << endl;*/
-  /*cout << "b: " << b.first << endl;*/
-  for (int i = 0; i < 5; i++) {
-    if (getRank(a.first[i]) < getRank(b.first[i]))
-      return true;
-  }
-  return false;
-}
-
 int main(int argc, char *argv[]) {
   // Part 1
   vector<string> input;
@@ -51,6 +41,10 @@ int main(int argc, char *argv[]) {
   long result = 0;
   vector<std::pair<string, string>> fourOfKind;
   vector<std::pair<string, string>> fullHouse;
+  vector<std::pair<string, string>> threeOfKind;
+  vector<std::pair<string, string>> twoPair;
+  vector<std::pair<string, string>> onePair;
+  vector<std::pair<string, string>> highCard;
 
   for (auto line : input) {
     size_t pos = line.find(' ');
@@ -80,11 +74,122 @@ int main(int argc, char *argv[]) {
         fullHouse.push_back(std::make_pair(first_part, second_part));
       }
     }
+
+    if (charSet.size() == 3) {
+      int max = 0;
+      for (const char c : first_part) {
+        if ( countInString(c, first_part) > max) {
+          max = countInString(c, first_part);
+        }
+      }
+
+      if (max == 3) {
+        threeOfKind.push_back(std::make_pair(first_part, second_part));
+      }
+      
+      if (max == 2) {
+        twoPair.push_back(std::make_pair(first_part, second_part));
+      }
+    }
+
+    if (charSet.size() == 4) {
+      onePair.push_back(std::make_pair(first_part, second_part));
+    }
+
+    if (charSet.size() == 5) {
+      highCard.push_back(std::make_pair(first_part, second_part));
+    }
   }
 
-  std::sort(fourOfKind.begin(), fourOfKind.end(), compareHand);
+  std::sort(fourOfKind.begin(), fourOfKind.end(), [](const auto &a, const auto &b) {
+    for (int i = 0; i < 5; i++) {
+      if (a.first[i] != b.first[i])
+        return getRank(a.first[i]) < getRank(b.first[i]);
+    }
+    return false;
+  });
+
+  int rank = 1001 - 1 - fourOfKind.size();
+
   for (int i = 0; i < fourOfKind.size(); i++) {
-    cout << fourOfKind[i].first << endl;
+    result += std::stoi(fourOfKind[i].second) * rank;
+    rank++;
   }
-  cout << "Result:" << result << endl;
+
+  std::sort(fullHouse.begin(), fullHouse.end(), [](const auto &a, const auto &b) {
+    for (int i = 0; i < 5; i++) {
+      if (a.first[i] != b.first[i])
+        return getRank(a.first[i]) < getRank(b.first[i]);
+    }
+    return false;
+  });
+
+  rank = 1001 - 1 - fourOfKind.size() - fullHouse.size();
+
+  for (int i = 0; i < fullHouse.size(); i++) {
+    result += std::stoi(fullHouse[i].second) * rank;
+    rank++;
+  }
+
+  std::sort(threeOfKind.begin(), threeOfKind.end(), [](const auto &a, const auto &b) {
+    for (int i = 0; i < 5; i++) {
+      if (a.first[i] != b.first[i])
+        return getRank(a.first[i]) < getRank(b.first[i]);
+    }
+    return false;
+  });
+
+  rank = 1001 - 1 - fourOfKind.size() - fullHouse.size() - threeOfKind.size();
+
+  for (int i = 0; i < threeOfKind.size(); i++) {
+    result += std::stoi(threeOfKind[i].second) * rank;
+    rank++;
+  }
+
+  std::sort(twoPair.begin(), twoPair.end(), [](const auto &a, const auto &b) {
+    for (int i = 0; i < 5; i++) {
+      if (a.first[i] != b.first[i])
+        return getRank(a.first[i]) < getRank(b.first[i]);
+    }
+    return false;
+  });
+
+  rank = 1001 - 1 - fourOfKind.size() - fullHouse.size() - threeOfKind.size() - twoPair.size();
+
+  for (int i = 0; i < twoPair.size(); i++) {
+    result += std::stoi(twoPair[i].second) * rank;
+    rank++;
+  }
+
+  std::sort(onePair.begin(), onePair.end(), [](const auto &a, const auto &b) {
+    for (int i = 0; i < 5; i++) {
+      if (a.first[i] != b.first[i])
+        return getRank(a.first[i]) < getRank(b.first[i]);
+    }
+    return false;
+  });
+
+  rank = 1001 - 1 - fourOfKind.size() - fullHouse.size() - threeOfKind.size() - twoPair.size() - onePair.size();
+
+  for (int i = 0; i < onePair.size(); i++) {
+    result += std::stoi(onePair[i].second) * rank;
+    rank++;
+  }
+
+  std::sort(highCard.begin(), highCard.end(), [](const auto &a, const auto &b) {
+    for (int i = 0; i < 5; i++) {
+      if (a.first[i] != b.first[i])
+        return getRank(a.first[i]) < getRank(b.first[i]);
+    }
+    return false;
+  });
+
+  rank = 1001 - 1 - fourOfKind.size() - fullHouse.size() - threeOfKind.size() - twoPair.size() - onePair.size() - highCard.size(); 
+
+  for (int i = 0; i < highCard.size(); i++) {
+    result += std::stoi(highCard[i].second) * rank;
+    rank++;
+  }
+
+  cout << "Part 1: " << result << endl;
 }
