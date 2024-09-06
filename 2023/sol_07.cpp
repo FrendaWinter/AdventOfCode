@@ -19,25 +19,28 @@ int getRank(char c) {
 }
 
 int countInString(const char &c, const string &a) {
+  // Counts the occurrences of character 'c' in string 'a'
   return std::count(a.begin(), a.end(), c);
 }
-
 int main(int argc, char *argv[]) {
-  // Part 1
+  // Part 1 
   vector<string> input;
   string filename = "data/test_data_07.txt";
   ifstream input_file(filename);
 
   if (input_file.is_open()) {
+    // Read each line from the file and store it in the 'input' vector
     string line;
     while (std::getline(input_file, line)) {
       input.push_back(line);
     }
     input_file.close();
   } else {
+    // Print error message if the file cannot be opened
     cerr << "Error when open file" << endl;
   }
 
+  // Initialize result and various hand categories for poker hands
   long result = 0;
   vector<std::pair<string, string>> fourOfKind;
   vector<std::pair<string, string>> fullHouse;
@@ -46,9 +49,12 @@ int main(int argc, char *argv[]) {
   vector<std::pair<string, string>> onePair;
   vector<std::pair<string, string>> highCard;
 
+  // Process each line from the input
   for (auto line : input) {
+    // Find the position of the first space character
     size_t pos = line.find(' ');
 
+    // Split the line into two parts based on the space character
     string first_part = line.substr(0, pos);
     string second_part = line.substr(pos + 1);
 
@@ -192,4 +198,4 @@ int main(int argc, char *argv[]) {
   }
 
   cout << "Part 1: " << result << endl;
-}
+}   
