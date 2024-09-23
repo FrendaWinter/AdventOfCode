@@ -78,11 +78,9 @@ int main(int argc, char *argv[]) {
 
   int total = 0;
   for (int i = 0; i < 188; i++) {
-    cout << count_array[i] << " ";
     total += count_array[i];
   }
 
-  cout << endl;
-  cout << total << endl;
+  cout << "Part 2: " << total << endl;
   return 0;
 }

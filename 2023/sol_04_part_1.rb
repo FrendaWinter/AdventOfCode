@@ -17,4 +17,4 @@ lines.each do |line|
   # p a2
 end
 
-p sum
+p "Part 1: " + sum.to_s
