@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <sstream>
 #include <iostream>
+#include <stdint.h>
 #include <string>
 #include <vector>
 
@@ -10,7 +11,7 @@ using namespace std;
 
 void parse_input(const vector<string> &input, vector<tuple<string, string, string>> &output, string keyword) {
 	bool flag = false;
-	for (int i = 1; i < input.size(); i++) {
+	for (uint64_t i = 1; i < input.size(); i++) {
 		string line = input[i];
 
 		if (line == keyword + " map:") {
@@ -20,15 +21,43 @@ void parse_input(const vector<string> &input, vector<tuple<string, string, strin
 
 		if (flag && !line.empty()) {
 			stringstream ss(line);
-			string des, source, result;
-			ss >> des >> source >> result;
-			output.push_back(make_tuple(des, source, result));
+			string des, source, range;
+			ss >> des >> source >> range;
+			output.push_back(make_tuple(des, source, range));
 		}
 
 		if (flag && line.empty()) {
 			flag = false;
 		}
 	}
+}
+
+vector<uint64_t> map_input_to_output(const vector<tuple<string, string, string>> &input, vector<uint64_t> &output) {
+	for (uint64_t i = 0; i < output.size(); i++) {
+		for (uint64_t j = 0; j < input.size(); j++) {
+			uint64_t des = stoull(get<0>(input[j]));
+			uint64_t source = stoull(get<1>(input[j]));
+			uint64_t range = stoull(get<2>(input[j]));
+
+			if (output[i] >= source && output[i] <= source + range) {
+				output[i] = des + (output[i] - source);
+				break;
+			}
+		}
+	}
+
+	return output;
+}
+
+uint64_t find_min (const vector<uint64_t> &input) {
+	uint64_t min = input[0];
+	for (uint64_t i = 1; i < input.size(); i++) {
+		if (input[i] < min) {
+			min = input[i];
+		}
+	}
+
+	return min;
 }
 
 int main(int argc, char *argv[]) {
@@ -60,7 +89,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Out put seed list
-	for (int i = 0; i < input.size(); i++) {
+	for (uint64_t i = 0; i < input.size(); i++) {
 		/*cout << seed_list[i] << endl;*/
 	}
 	
@@ -82,5 +111,26 @@ int main(int argc, char *argv[]) {
 	parse_input(input, humidity_to_location, "humidity-to-location");
 
 	cout << "Parsing input done" << endl;
+
+	// Mapping seed to soil
+	vector<uint64_t> result_list;
+	for (uint64_t i = 0; i < seed_list.size(); i++) {
+		result_list.push_back(stoull(seed_list[i]));
+	}
+
+	result_list = map_input_to_output(seed_to_soil, result_list);
+	result_list = map_input_to_output(soil_to_fertilizer, result_list);
+	result_list = map_input_to_output(fertilizer_to_water, result_list);
+	result_list = map_input_to_output(water_to_light, result_list);
+	result_list = map_input_to_output(light_to_temperature, result_list);
+	result_list = map_input_to_output(temperature_to_humidity, result_list);
+	result_list = map_input_to_output(humidity_to_location, result_list);
+
+	for (uint64_t i = 0; i < result_list.size(); i++) {
+		cout << result_list[i] << " ";
+	}
+	cout << endl;
+	cout << "Part 2: " << find_min(result_list) << endl;
+
 	return 0;
 }
