@@ -8,7 +8,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    // Part 2
+    // Part 1
     vector<string> input;
     string filename = "data/input_day_02.txt";
     ifstream input_file(filename);

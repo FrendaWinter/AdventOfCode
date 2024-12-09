@@ -16,9 +16,9 @@ bool is_vector_safe(std::vector<int> &tmp) {
 
     if (is_incr)
     {
-        for (int i = 0; i < tmp.size() - 1; i++)
+        for (int i = 1; i < tmp.size(); i++)
         {
-            if (tmp[i] > tmp[i + 1] || tmp[i + 1] - tmp[i] > 3 || tmp[i + 1] == tmp[i])
+            if (tmp[i] < tmp[i - 1] || tmp[i] - tmp[i - 1] > 3 || tmp[i] == tmp[i - 1])
             {
                 is_safe = false;
             }
@@ -27,9 +27,9 @@ bool is_vector_safe(std::vector<int> &tmp) {
 
     if (!is_incr)
     {
-        for (int i = 0; i < tmp.size() - 1; i++)
+        for (int i = 1; i < tmp.size(); i++)
         {
-            if (tmp[i] < tmp[i + 1] || tmp[i] - tmp[i + 1] > 3 || tmp[i + 1] == tmp[i])
+            if (tmp[i] > tmp[i - 1] || tmp[i - 1] - tmp[i] > 3 || tmp[i] == tmp[i - 1])
             {
                 is_safe = false;
             }
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
             continue;
         }
 
-        for (int i = 1; i < tmp.size(); i++)
+        for (int i = 2; i < tmp.size(); i++)
         {
             std::vector<int> subVector(tmp.begin(), tmp.begin() + i + 1);
             if (!is_vector_safe(subVector))
@@ -101,15 +101,21 @@ int main(int argc, char *argv[])
                     break;
                 }
 
-                // std::vector<int> tmp_2 = tmp;
-                // tmp_2.erase(tmp_2.begin() + (i - 1));
-                // if (is_vector_safe(tmp_2))
-                // {
-                //     safe += is_safe;
-                //     break;
-                // }
-                // else
-                //     continue;
+                std::vector<int> tmp_2 = tmp;
+                tmp_2.erase(tmp_2.begin() + (i - 1));
+                if (is_vector_safe(tmp_2))
+                {
+                    safe += is_safe;
+                    break;
+                }
+
+                std::vector<int> tmp_3 = tmp;
+                tmp_3.erase(tmp_3.begin() + (i - 2));
+                if (is_vector_safe(tmp_3))
+                {
+                    safe += is_safe;
+                    break;
+                }
             }
         }
     }
