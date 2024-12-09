@@ -28,7 +28,6 @@ int main(int argc, char *argv[])
     }
 
     std::vector<int> left;
-    std::vector<int> right;
 
     int a[100000] = {0};
 
@@ -38,10 +37,8 @@ int main(int argc, char *argv[])
         int second_part = std::stoi(line.substr(8));
 
         auto it_left = std::lower_bound(left.begin(), left.end(), first_part);
-        auto it_right = std::lower_bound(right.begin(), right.end(), second_part);
 
         left.insert(it_left, first_part);
-        right.insert(it_right, second_part);
 
         a[second_part] += 1;
     }
