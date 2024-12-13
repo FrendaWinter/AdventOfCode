@@ -1,10 +1,55 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
-#include "utils.cpp"
+#include <fstream>
 
 using namespace std;
+
+std::vector<std::string> split(std::string s, std::string delimiter)
+{
+  size_t pos_start = 0, pos_end, delim_len = delimiter.length();
+  std::string token;
+  std::vector<std::string> res;
+
+  while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos)
+  {
+    token = s.substr(pos_start, pos_end - pos_start);
+    pos_start = pos_end + delim_len;
+    res.push_back(token);
+  }
+
+  res.push_back(s.substr(pos_start));
+  return res;
+}
+
+vector<string> readFileLines(const string &filename)
+{
+  ifstream inputFile(filename);
+  vector<string> lines;
+
+  // Check if file is open
+  if (!inputFile.is_open())
+  {
+    cerr << "Error opening file: " << filename << endl;
+    return lines; // Return empty vector on error
+  }
+
+  string line;
+  while (getline(inputFile, line))
+  {
+    lines.push_back(line);
+  }
+
+  inputFile.close();
+  return lines;
+}
+
+const std::vector<std::tuple<int, int, int, int, int, int>> direction_map = {
+  {0, 1, 1, 0, -1, 0},  // Up
+  {1, 0, 0, -1, 0, 1},  // Right
+  {0, -1, -1, 0, 1, 0}, // Down
+  {-1, 0, 0, 1, 0, -1}  // Left
+};
 
 int main()
 {
@@ -16,49 +61,48 @@ int main()
     return 1;
   }
 
-  vector<string> directions = split(lines[0], ", ");
+  vector<string> turns = split(lines[0], ", ");
 
   int x, y = 0;
 
-  for (int i = 0; i < directions.size(); i++)
+  std::pair<int, int> direction = {0, 1};
+
+  for (int i = 0; i < turns.size(); i++)
   {
-    string direction = directions[i].substr(0, 1);
+    string action = turns[i].substr(0, 1);
 
-    string step = directions[i].substr(1, directions[i].length() - 1);
+    int stepLength = std::stoi(turns[i].substr(1, turns[i].length() - 1));
 
-    // cout << direction << " " << step << endl;
-    int stepLength = std::stoi(step);
-
-    int di = 1;
-    // if odd -> Change y -> Dir -
-    // if even -> Change x -> Dir +
-
-    if (i % 2 == 0)
+    for (auto direc : direction_map)
     {
-      if (direction == "R")
+      // Next if not match direction
+      if (std::get<0>(direc) != direction.first && std::get<1>(direc) != direction.second)
       {
-        x += di * stepLength;
-        di *= -1;
+        continue;
       }
-      else
-      {
-        x -= di * stepLength;
-        di *= -1;
+      cout << "acc : " << action << " " << stepLength << endl;
+      if (action == "R") {
+        x += stepLength * std::get<2>(direc);
+        y += stepLength * std::get<3>(direc);
+        cout << "xy: " << x << " " << y << endl;
+        direction.first = std::get<2>(direc);
+        direction.second = std::get<3>(direc);
+        cout << "Direc: " << direction.first << " " << direction.second << endl;
+        break;
       }
-    }
-    else
-    {
-      if (direction == "R")
+
+      if (action == "L")
       {
-        y += di * stepLength;
-        di *= -1;
-      }
-      else
-      {
-        y -= di * stepLength;
-        di *= -1;
+        x += stepLength * std::get<4>(direc);
+        y += stepLength * std::get<5>(direc);
+        cout << x << " " << y << endl;
+        direction.first = std::get<4>(direc);
+        direction.second = std::get<5>(direc);
+        cout << "Direc: " << direction.first << " " << direction.second << endl;
+        break;
       }
     }
   }
-  cout << x + y;
+
+  cout << "Result: " << x + y << endl;
 }
