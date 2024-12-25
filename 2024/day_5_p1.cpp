@@ -30,7 +30,7 @@ bool isCorrectOrder(int &i)
 
 	for (int x = 0; x < page.size(); x++) {
 		for (int j = x + 1; j < page.size(); j++) {
-			if (find(orders[x].first.begin(), orders[x].first.end(), page[j]) != orders[x].first.end())
+			if (find(orders[page[x]].first.begin(), orders[page[x]].first.end(), page[j]) != orders[page[x]].first.end())
 			{
 				return false;
 			}
@@ -38,7 +38,7 @@ bool isCorrectOrder(int &i)
 
 		for (int k = 0; k < x; k++)
 		{
-			if (find(orders[x].second.begin(), orders[x].second.end(), page[k]) != orders[x].second.end())
+			if (find(orders[page[x]].second.begin(), orders[page[x]].second.end(), page[k]) != orders[page[x]].second.end())
 			{
 				return false;
 			}
@@ -99,8 +99,34 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	for (int i = 0; i < 100; ++i)
+	{
+		if (!orders[i].first.empty() || !orders[i].second.empty())
+		{ // Print only non-empty pairs
+			std::cout << "orders[" << i << "]:\n";
+
+			std::cout << "  First set: ";
+			for (int num : orders[i].first)
+			{
+				std::cout << num << " ";
+			}
+			std::cout << "\n";
+
+			std::cout << "  Second set: ";
+			for (int num : orders[i].second)
+			{
+				std::cout << num << " ";
+			}
+			std::cout << "\n";
+		}
+	}
+
 	for (int i = 0; i < pages.size(); i++) {
 		if (isCorrectOrder(i)) {
+			for (int j = 0; j < pages[i].size(); j++) {
+				cout << pages[i][j] << " ";
+			}
+			cout << endl;
 			result += pages[i][pages[i].size() / 2];
 		}
 	}
