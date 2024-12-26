@@ -58,6 +58,7 @@ std::pair<int, int> turnRight(std::pair<int, int> direction)
 
 bool isCounterObstructions(std::pair<int, int> position, std::pair<int, int> direction)
 {
+	// cout << position.first << " " << position.second << endl;
 	if (mapArea[position.first + direction.first][position.second + direction.second] == '#')
 	{
 		return true;
@@ -87,41 +88,50 @@ int main(int argc, char *argv[])
         cerr << "Error when open file" << endl;
     }
 
-    int result = 1;
+    int result = 0;
 
 	std::pair<int, int> border = std::make_pair(mapArea.size(), mapArea[0].length());
-	std::pair<int, int> position;
-	std::pair<int, int> direction = std::make_pair(-1, 0);
 
+	std::pair<int, int> firstPosition;
 	for (int i = 0; i < border.first; i++)
 	{
-		for (int j = 0; j < border.second; j ++) {
-			if (mapArea[i][j] == '^') {
-				position = std::make_pair(i, j);
+		for (int j = 0; j < border.second; j++)
+		{
+			if (mapArea[i][j] == '^')
+			{
+				firstPosition = std::make_pair(i, j);
 				break;
 			}
 		}
-	}
-
-	while (!isOutOfMap(position, direction, border))
-	{
-		mapArea[position.first][position.second] = 'X';
-		if (isCounterObstructions(position, direction))
-		{
-			direction = turnRight(direction);
-		}
-		position.first += direction.first;
-		position.second += direction.second;
 	}
 
 	for (int i = 0; i < border.first; i++)
 	{
 		for (int j = 0; j < border.second; j++)
 		{
-			if (mapArea[i][j] == 'X')
+			std::pair<int, int> position = firstPosition;
+			std::pair<int, int> direction = std::make_pair(-1, 0);
+
+			if (mapArea[i][j] == '.')
+				mapArea[i][j] = '#';
+			else continue;
+
+			int step = 0;
+			while (!isOutOfMap(position, direction, border))
 			{
-				result++;
+				if (isCounterObstructions(position, direction))
+				{
+					direction = turnRight(direction);
+				}
+				position.first += direction.first;
+				position.second += direction.second;
+				step++;
+				if (step > 10000) {
+					result++;
+					break;
+				}
 			}
+			mapArea[i][j] = '.';
 		}
 	}
 
