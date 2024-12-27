@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 {
     // Part 1
 	vector<string> input;
-	string filename = "data/input_test.txt";
+	string filename = "data/input_day_07.txt";
     ifstream input_file(filename);
 
     if (input_file.is_open())
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
         cerr << "Error when open file" << endl;
     }
 
-    int result = 0;
+    long long int result = 0;
 
 	// Idea
 	// Count number of operation n - 1
@@ -67,11 +67,12 @@ int main(int argc, char *argv[])
         for (int j = 0; j < pow(2, exponent); j++)
         {
             std::string s = std::bitset<32>(j).to_string();
-            cout << s.substr(s.length() - exponent) << " ";
 
+            s = s.substr(s.length() - exponent);
             long int tmp = inputMap[i].second[0];
             for (int k = 0; k < inputMap[i].second.size() - 1; k++)
             {
+                
                 if (s[k] == '0')
                 {
                     tmp += inputMap[i].second[k + 1];
@@ -88,8 +89,6 @@ int main(int argc, char *argv[])
                 break;
             }
         }
-
-        cout << endl;
     }
 
     cout << "Result: " << result << endl;
