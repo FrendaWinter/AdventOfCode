@@ -9,6 +9,14 @@
 
 using namespace std;
 
+bool isCompacted(const vector<int> &a) {
+    for (int i = 0; i < a.size(); i++) {
+        if (a[i] == -1 ) return false;
+    }
+
+    return true;
+}
+
 int main(int argc, char *argv[])
 {
     // Part 1
@@ -17,7 +25,6 @@ int main(int argc, char *argv[])
     ifstream input_file(filename);
 
     if (input_file.is_open())
-
     {
         string line;
         while (std::getline(input_file, line))
@@ -31,20 +38,56 @@ int main(int argc, char *argv[])
         cerr << "Error when open file" << endl;
     }
 
-    int result = 0;
+    long long int result = 0;
 
+    // Decrypt input to obtain disk map
     string s = input[0];
-    string tmp;
+    vector<int> diskMap;
+    int IDs = 0;
     for (int i = 0; i < s.length(); i++) {
-        int n = std::stoi(std::to_string(s[i]));
-
+        int n = s[i] - '0';
         if (i % 2 == 0) {
-            tmp.append(std::string(n, i + '0'));
+            for (int j = 0; j < n; j++) {
+                diskMap.push_back(IDs);
+            }
+            IDs++;
         } else {
-            tmp.append(std::string(n, '.'));
+            for (int j = 0; j < n; j++) {
+                diskMap.push_back(-1);
+            }
         }
     }
 
-    cout << tmp << endl;
+    // Disk Map Compacting
+    for (int x = diskMap.size() - 1; x >= 0; x--) {
+        if (isCompacted(diskMap)) {
+            break;
+        }
+
+        if (diskMap[x] != -1)
+        {
+            for (int y = 0; y < x; y++)
+            {
+                // Swap value of IDs ele to free space ele (-1)
+                if (diskMap[y] == -1) {
+                    diskMap[y] = diskMap[x];
+                    diskMap.erase(diskMap.begin() + x);
+                    break;
+                }
+            }
+        } else {
+            // Delete ele if it = -1 (free space)
+            diskMap.erase(diskMap.begin() + x);
+        }
+    }
+
+    // Cal hash
+    for (int i = 0; i < diskMap.size(); i++)
+    {
+        if (diskMap[i] == -1) continue;
+
+        result += i * diskMap[i];
+    }
+
     cout << "Result: " << result << endl;
-}
+    }
