@@ -3,9 +3,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <sstream>
-#include <bitset>
-#include <math.h>
+#include <set>
 
 using namespace std;
 
@@ -18,41 +16,40 @@ const std::vector<std::pair<int, int>> directions = {
     {-1, 0}, // Up
 };
 
-int countPoint(int i, int j, int ref) 
+// Recursive function to find all valid paths
+void findTrail(std::set<std::pair<int, int>> &trails, int i, int j, int ref)
 {
-    int result = 0;
+    if (input[i][j] == '9') // Base case: reached height 0
+        trails.emplace(std::make_pair(i, j));
 
-    for (auto direction : directions) {
-        if (input[i][j] == '0')
-            return 1;
-        
-        i += direction.first;
-        j += direction.second;
+    // Explore all four directions
+    for (auto direction : directions)
+    {
+        int ni = i + direction.first;
+        int nj = j + direction.second;
 
-        if (i >= input.size() || i < 0) return 0;
-        if (j >= input[i].size() || j < 0)
-            return 0;
-
-
-        
-        if (input[i][j] == '0' + ref)
+        // Check bounds
+        if (ni >= 0 && ni < input.size() && nj >= 0 && nj < input[ni].size())
         {
-            cout << i << " " << j << endl;
-            cout << "in: " << input[i][j] << endl;
-            result += countPoint(i, j, ref - 1);
-        }
-        else
-        {
-           continue;
+            // Check if the next cell is one height lower
+            if (input[ni][nj] == '0' + ref + 1)
+            {
+                findTrail(trails, ni, nj, ref + 1);
+            }
         }
     }
-    return result;
+}
+
+int countScore(int i, int j) {
+    std::set<std::pair<int, int>> trails;
+    findTrail(trails, i, j, 0);
+    return trails.size();
 }
 
 int main(int argc, char *argv[])
 {
     // Part 1
-	string filename = "data/input_test.txt";
+	string filename = "data/input_day_10.txt";
     ifstream input_file(filename);
 
     if (input_file.is_open())
@@ -73,9 +70,8 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < input.size(); i++) {
         for (int j = 0; j < input[i].length(); j++) {
-            if (input[i][j] == '9') {
-                result += countPoint(i, j, 9);
-                // cout << result << endl;
+            if (input[i][j] == '0') {
+                result += countScore(i, j);
             }
         }
     }
