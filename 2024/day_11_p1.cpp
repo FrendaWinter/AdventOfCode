@@ -10,7 +10,7 @@ using namespace std;
 void blink(vector<long long int> &stones)
 {
     for (int i = 0; i < stones.size(); i++) {
-        if (std::to_string(stones[i]).length() == 1 && stones[i] - '0' == 0)
+        if (std::to_string(stones[i]) == "0")
         {
             stones[i] = 1;
             continue;
@@ -32,18 +32,18 @@ void blink(vector<long long int> &stones)
 
             stones.erase(stones.begin() + i);
             stones.insert(stones.begin() + i, {firstNum, secondNum});
-            i += 2;
+            i ++;
             continue;
         }
 
-        stones[i] *= 1024;
+        stones[i] *= 2024;
     }
 }
 
 int main(int argc, char *argv[])
 {
     vector<string> input;
-	string filename = "data/input_test.txt";
+	string filename = "data/input_day_11.txt";
     ifstream input_file(filename);
 
     if (input_file.is_open())
