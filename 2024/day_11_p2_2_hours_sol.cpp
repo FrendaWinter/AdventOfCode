@@ -78,7 +78,7 @@ std::map<long long int, long long int> analyzeUnique(vector<long long int> stone
 int main(int argc, char *argv[])
 {
     vector<string> input;
-	string filename = "data/input_test.txt";
+	string filename = "data/input_day_11.txt";
     ifstream input_file(filename);
 
     if (input_file.is_open())
