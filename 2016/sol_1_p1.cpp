@@ -45,6 +45,7 @@ vector<string> readFileLines(const string &filename)
 }
 
 const std::vector<std::tuple<int, int, int, int, int, int>> direction_map = {
+  // Format: direction, right of direction, left of direction.
   {0, 1, 1, 0, -1, 0},  // Up
   {1, 0, 0, -1, 0, 1},  // Right
   {0, -1, -1, 0, 1, 0}, // Down
@@ -53,7 +54,7 @@ const std::vector<std::tuple<int, int, int, int, int, int>> direction_map = {
 
 int main()
 {
-  vector<string> lines = readFileLines("./data/input_1.txt");
+  vector<string> lines = readFileLines("./data/input.txt");
 
   if (lines.empty())
   {
@@ -76,29 +77,28 @@ int main()
     for (auto direc : direction_map)
     {
       // Next if not match direction
-      if (std::get<0>(direc) != direction.first && std::get<1>(direc) != direction.second)
+      if (std::get<0>(direc) != direction.first || std::get<1>(direc) != direction.second)
       {
         continue;
       }
-      cout << "acc : " << action << " " << stepLength << endl;
       if (action == "R") {
+        // Take steps
         x += stepLength * std::get<2>(direc);
         y += stepLength * std::get<3>(direc);
-        cout << "xy: " << x << " " << y << endl;
+        // Change current direction
         direction.first = std::get<2>(direc);
         direction.second = std::get<3>(direc);
-        cout << "Direc: " << direction.first << " " << direction.second << endl;
         break;
       }
 
       if (action == "L")
       {
+        // Take steps
         x += stepLength * std::get<4>(direc);
         y += stepLength * std::get<5>(direc);
-        cout << x << " " << y << endl;
+        // Change current direction
         direction.first = std::get<4>(direc);
         direction.second = std::get<5>(direc);
-        cout << "Direc: " << direction.first << " " << direction.second << endl;
         break;
       }
     }
