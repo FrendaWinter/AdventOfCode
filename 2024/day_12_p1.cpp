@@ -15,26 +15,32 @@ const std::vector<std::pair<int, int>> directions = {
     {0, -1}, // Left
     {-1, 0}, // Up
 };
+vector<string> &garden;
+int result = 0;
 
 // Find area of char
-vector<std::pair<int, int>> findArea(vector<string> &garden, const int &x, const int &y) {
-
+vector<std::pair<int, int>> findArea(const std::pair<int, int> &p)
+{
+    char cmp = garden[p.first][p.second];
+    vector<std::pair<int, int>> pArea;
 }
 
 // Mark area with dot
-void markArea(vector<string> &garden, vector<std::pair<int, int>> area) {
-
-}
+void markArea(const vector<std::pair<int, int>> &area)
+{
+    for (size_t i = 0; i < area.size(); i++)
+    {
+        garden[area[i].first][area[i].second] = '.';
+    }
+};
 
 // Calculate perimeter
-int calPerimeters(vector<string> garden, vector<std::pair<int, int>> area) {
-
-}
+int calPerimeters(vector<string> garden, vector<std::pair<int, int>> area);
 
 int main(int argc, char *argv[])
 {
     vector<string> input;
-    string filename = "data/input_day_12.txt";
+    string filename = "data/input_test.txt";
     ifstream input_file(filename);
 
     if (input_file.is_open())
@@ -51,27 +57,17 @@ int main(int argc, char *argv[])
         cerr << "Error when open file" << endl;
     }
 
-    int result = 0;
-    std::map<char, int> areas;
-    std::map<char, int> perimeters;
-    // Init value
-    for (int i = 0; i < input.size(); i++)
+    vector<string> garden = input;
+    for (int i = 0; i < garden.size(); i++)
     {
-        for (int j = 0; j < input[i].length(); j++)
+        for (int j = 0; j < garden[i].length(); j++)
         {
-            if (areas.count(input[i][j]) > 0)
+            if (garden[i][j] != '.')
             {
-                areas[input[i][j]]++;
-            }
-            else
-            {
-                areas[input[i][j]] = 1;
-                perimeters[input[i][j]] = 0;
+                findArea(std::make_pair(i, j));
             }
         }
     }
-
-    vector<string> garden = input;
 
     cout << "Result: " << result << endl;
 }
