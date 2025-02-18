@@ -23,10 +23,10 @@ const std::vector<std::pair<int, int>> nearbyLand = {
 
 // Mapping for outer corner
 const std::vector<string> outerCorner = {
-    "11xxxxx1",
-    "x111xxxx",
-    "xxx111xx",
-    "xxxxx111",
+    "x1xxxxx1",
+    "x1x1xxxx",
+    "xxx1x1xx",
+    "xxxxx1x1",
 };
 
 int checkOuterCorner(const int &x, const int &y, const vector<std::pair<int, int>> &area)
@@ -49,84 +49,6 @@ int checkOuterCorner(const int &x, const int &y, const vector<std::pair<int, int
             }
 
             if (outerCorner[i][j] == 'x')
-            {
-                continue;
-            }
-        }
-    }
-    return cornerCount;
-}
-
-// Two special case, one-sided
-const std::vector<string> oneSidedCornerRight = {"01xxxxx1", "xx101xxx"};
-const std::vector<string> oneSidedCornerLeft = {"xxx101xx", "xxxxx101"};
-
-int checkOneSidedRight(const int &x, const int &y, const vector<std::pair<int, int>> &area)
-{
-    int cornerCount = 2;
-    for (int i = 0; i < oneSidedCornerRight.size(); i++)
-    {
-        for (int j = 0; j < oneSidedCornerRight[i].length(); j++)
-        {
-            int newX = x + nearbyLand[j].first;
-            int newY = y + nearbyLand[j].second;
-
-            if (oneSidedCornerRight[i][j] == '1')
-            {
-                if (std::find(area.begin(), area.end(), std::make_pair(newX, newY)) != area.end())
-                {
-                    cornerCount--;
-                    break;
-                }
-            }
-
-            if (oneSidedCornerRight[i][j] == '0')
-            {
-                if (std::find(area.begin(), area.end(), std::make_pair(newX, newY)) == area.end())
-                {
-                    cornerCount--;
-                    break;
-                }
-            }
-
-            if (oneSidedCornerRight[i][j] == 'x')
-            {
-                continue;
-            }
-        }
-    }
-    return cornerCount;
-}
-
-int checkOneSidedLeft(const int &x, const int &y, const vector<std::pair<int, int>> &area)
-{
-    int cornerCount = 2;
-    for (int i = 0; i < oneSidedCornerLeft.size(); i++)
-    {
-        for (int j = 0; j < oneSidedCornerLeft[i].length(); j++)
-        {
-            int newX = x + nearbyLand[j].first;
-            int newY = y + nearbyLand[j].second;
-
-            if (oneSidedCornerLeft[i][j] == '1')
-            {
-                if (std::find(area.begin(), area.end(), std::make_pair(newX, newY)) != area.end())
-                {
-                    cornerCount--;
-                    break;
-                }
-            }
-
-            if (oneSidedCornerLeft[i][j] == '0')
-            {
-                if (std::find(area.begin(), area.end(), std::make_pair(newX, newY)) == area.end())
-                {
-                    cornerCount--;
-                    break;
-                }
-            }
-
-            if (oneSidedCornerLeft[i][j] == 'x')
             {
                 continue;
             }
@@ -233,7 +155,7 @@ int calCorner(const vector<std::pair<int, int>> &area)
 
     for (int i = 0; i < area.size(); i++)
     {
-        corners += checkInnerCorner(area[i].first, area[i].second, area) + checkOuterCorner(area[i].first, area[i].second, area) + checkOneSidedRight(area[i].first, area[i].second, area) + checkOneSidedLeft(area[i].first, area[i].second, area);
+        corners += checkInnerCorner(area[i].first, area[i].second, area) + checkOuterCorner(area[i].first, area[i].second, area);
     }
     return corners;
 }
@@ -244,9 +166,9 @@ int calPrice(const vector<std::pair<int, int>> &area)
     int areaSize = area.size();
 
     // Idea: Count corner instead of count side
+    // https://www.reddit.com/r/adventofcode/comments/1hex153/2024_day_12_if_you_struggle_with_part_2/
     int corners = calCorner(area);
 
-    cout << "Corner: " << corners << endl;
     return areaSize * corners;
 }
 
