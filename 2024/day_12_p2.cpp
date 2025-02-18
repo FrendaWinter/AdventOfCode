@@ -9,6 +9,173 @@
 
 using namespace std;
 
+vector<string> garden;
+const std::vector<std::pair<int, int>> nearbyLand = {
+    {-1, -1}, // Northwest
+    {-1, 0},  // North
+    {-1, 1},  // Northeast
+    {0, 1},   // East
+    {1, 1},   // Southeast
+    {1, 0},   // South
+    {1, -1},  // Southwest
+    {0, -1},  // West
+};
+
+// Mapping for outer corner
+const std::vector<string> outerCorner = {
+    "11xxxxx1",
+    "x111xxxx",
+    "xxx111xx",
+    "xxxxx111",
+};
+
+int checkOuterCorner(const int &x, const int &y, const vector<std::pair<int, int>> &area)
+{
+    int cornerCount = 4;
+    for (int i = 0; i < outerCorner.size(); i++)
+    {
+        for (int j = 0; j < outerCorner[i].length(); j++)
+        {
+            int newX = x + nearbyLand[j].first;
+            int newY = y + nearbyLand[j].second;
+
+            if (outerCorner[i][j] == '1')
+            {
+                if (std::find(area.begin(), area.end(), std::make_pair(newX, newY)) != area.end())
+                {
+                    cornerCount--;
+                    break;
+                }
+            }
+
+            if (outerCorner[i][j] == 'x')
+            {
+                continue;
+            }
+        }
+    }
+    return cornerCount;
+}
+
+// Two special case, one-sided
+const std::vector<string> oneSidedCornerRight = {"01xxxxx1", "xx101xxx"};
+const std::vector<string> oneSidedCornerLeft = {"xxx101xx", "xxxxx101"};
+
+int checkOneSidedRight(const int &x, const int &y, const vector<std::pair<int, int>> &area)
+{
+    int cornerCount = 2;
+    for (int i = 0; i < oneSidedCornerRight.size(); i++)
+    {
+        for (int j = 0; j < oneSidedCornerRight[i].length(); j++)
+        {
+            int newX = x + nearbyLand[j].first;
+            int newY = y + nearbyLand[j].second;
+
+            if (oneSidedCornerRight[i][j] == '1')
+            {
+                if (std::find(area.begin(), area.end(), std::make_pair(newX, newY)) != area.end())
+                {
+                    cornerCount--;
+                    break;
+                }
+            }
+
+            if (oneSidedCornerRight[i][j] == '0')
+            {
+                if (std::find(area.begin(), area.end(), std::make_pair(newX, newY)) == area.end())
+                {
+                    cornerCount--;
+                    break;
+                }
+            }
+
+            if (oneSidedCornerRight[i][j] == 'x')
+            {
+                continue;
+            }
+        }
+    }
+    return cornerCount;
+}
+
+int checkOneSidedLeft(const int &x, const int &y, const vector<std::pair<int, int>> &area)
+{
+    int cornerCount = 2;
+    for (int i = 0; i < oneSidedCornerLeft.size(); i++)
+    {
+        for (int j = 0; j < oneSidedCornerLeft[i].length(); j++)
+        {
+            int newX = x + nearbyLand[j].first;
+            int newY = y + nearbyLand[j].second;
+
+            if (oneSidedCornerLeft[i][j] == '1')
+            {
+                if (std::find(area.begin(), area.end(), std::make_pair(newX, newY)) != area.end())
+                {
+                    cornerCount--;
+                    break;
+                }
+            }
+
+            if (oneSidedCornerLeft[i][j] == '0')
+            {
+                if (std::find(area.begin(), area.end(), std::make_pair(newX, newY)) == area.end())
+                {
+                    cornerCount--;
+                    break;
+                }
+            }
+
+            if (oneSidedCornerLeft[i][j] == 'x')
+            {
+                continue;
+            }
+        }
+    }
+    return cornerCount;
+}
+
+// Mapping for inner corner
+const std::vector<string> innerCorner = {
+    "10xxxxx0", "x010xxxx", "xxx010xx", "xxxxx010"};
+
+int checkInnerCorner(const int &x, const int &y, const vector<std::pair<int, int>> &area)
+{
+    int cornerCount = 4;
+    for (int i = 0; i < innerCorner.size(); i++)
+    {
+        for (int j = 0; j < innerCorner[i].length(); j++)
+        {
+            int newX = x + nearbyLand[j].first;
+            int newY = y + nearbyLand[j].second;
+
+            if (innerCorner[i][j] == '1')
+            {
+                if (std::find(area.begin(), area.end(), std::make_pair(newX, newY)) != area.end())
+                {
+                    cornerCount--;
+                    break;
+                }
+            }
+
+            if (innerCorner[i][j] == '0')
+            {
+                if (std::find(area.begin(), area.end(), std::make_pair(newX, newY)) == area.end())
+                {
+                    cornerCount--;
+                    break;
+                }
+            }
+
+            if (innerCorner[i][j] == 'x')
+            {
+                continue;
+            }
+        }
+    }
+    return cornerCount;
+}
+
 const std::vector<std::pair<int, int>> directions = {
     {0, 1},  // Right
     {1, 0},  // Down
@@ -16,7 +183,6 @@ const std::vector<std::pair<int, int>> directions = {
     {-1, 0}, // Up
 };
 
-vector<string> garden;
 void markArea(const std::pair<int, int> &p);
 
 void harvestArea(const char &cmp, const std::pair<int, int> &p, vector<std::pair<int, int>> &area)
@@ -67,24 +233,7 @@ int calCorner(const vector<std::pair<int, int>> &area)
 
     for (int i = 0; i < area.size(); i++)
     {
-        int fourAngle = 4;
-        for (int j = 0; j < directions.size(); j++)
-        {
-
-            int x = area[i].first + directions[j].first;
-            int y = area[i].second + directions[j].second;
-
-            if (x < 0 || x >= garden.size() || y < 0 || y >= garden[0].size())
-            {
-                continue;
-            }
-
-            if (std::find(area.begin(), area.end(), std::make_pair(x, y)) != area.end())
-            {
-                fourAngle--;
-            }
-        }
-        corners += fourAngle;
+        corners += checkInnerCorner(area[i].first, area[i].second, area) + checkOuterCorner(area[i].first, area[i].second, area) + checkOneSidedRight(area[i].first, area[i].second, area) + checkOneSidedLeft(area[i].first, area[i].second, area);
     }
     return corners;
 }
@@ -95,9 +244,10 @@ int calPrice(const vector<std::pair<int, int>> &area)
     int areaSize = area.size();
 
     // Idea: Count corner instead of count side
-    int perimeter = calCorner(area);
+    int corners = calCorner(area);
 
-    return areaSize * perimeter;
+    cout << "Corner: " << corners << endl;
+    return areaSize * corners;
 }
 
 int main(int argc, char *argv[])
